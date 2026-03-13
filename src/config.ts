@@ -7,6 +7,7 @@ export interface Config {
   linearTeamId?: string;
   aiProvider?: "anthropic" | "openai" | "gemini";
   aiApiKey?: string;
+  aiModel?: string;
 }
 
 const CONFIG_DIR = join(homedir(), ".taskgen");

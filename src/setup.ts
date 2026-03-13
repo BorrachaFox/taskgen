@@ -1,22 +1,22 @@
 import { input, select, confirm } from "@inquirer/prompts";
 import chalk from "chalk";
 import { loadConfig, saveConfig } from "./config.js";
-import { getTeams } from "./linear.js";
+import { fetchAvailableModels } from "./ai.js";
+import ora from "ora";
 
 export async function runSetup() {
   console.log(chalk.bold.cyan("\n⚙️  taskgen setup\n"));
 
   const config = loadConfig();
 
-  // AI Provider
   const aiProvider = await select({
     message: "Which AI provider do you want to use?",
     choices: [
       { name: "Anthropic (Claude)", value: "anthropic" },
-      { name: "OpenAI (GPT-4o)", value: "openai" },
-      { name: "Google (Gemini 2.0 Flash)", value: "gemini" },
+      { name: "OpenAI (GPT)", value: "openai" },
+      { name: "Google (Gemini)", value: "gemini" },
     ],
-    default: config.aiProvider ?? "anthropic",
+    default: config.aiProvider ?? "gemini",
   });
 
   const providerLabel: Record<string, string> = {
@@ -31,7 +31,30 @@ export async function runSetup() {
     validate: (v) => v.trim().length > 0 || "API key is required",
   });
 
-  // Linear
+  const useDefaultModel = await confirm({
+    message: "Use default model for the selected provider?",
+    default: true,
+  });
+
+  let aiModel: string | undefined;
+
+  if (!useDefaultModel) {
+    const modelsSpinner = ora("Fetching available models...").start();
+    const models = await fetchAvailableModels(aiProvider, aiApiKey.trim());
+    modelsSpinner.stop();
+
+    if (models.length > 0) {
+      aiModel = await select({
+        message: "Which model do you want to use?",
+        choices: models.map((model) => ({ name: model.name, value: model.id })),
+        default: config.aiModel,
+        pageSize: Math.min(models.length, 10),
+      });
+    } else {
+      console.log(chalk.yellow("Could not fetch models. Using default."));
+    }
+  }
+
   const useLinear = await confirm({
     message: "Do you want to connect Linear?",
     default: !!config.linearApiKey,
@@ -42,38 +65,16 @@ export async function runSetup() {
 
   if (useLinear) {
     linearApiKey = await input({
-      message: "Enter your Linear API key (from linear.app/settings/api):",
+      message: "Enter your Linear API key:",
       default: config.linearApiKey,
       validate: (v) => v.trim().length > 0 || "API key is required",
     });
-
-    console.log(chalk.dim("  Fetching your Linear teams..."));
-
-    try {
-      const teams = await getTeams(linearApiKey);
-
-      if (teams.length === 0) {
-        console.log(chalk.yellow("  No teams found. Check your API key."));
-      } else {
-        linearTeamId = await select({
-          message: "Which team should tasks be added to?",
-          choices: teams.map((t) => ({
-            name: `${t.name} (${t.key})`,
-            value: t.id,
-          })),
-          default: config.linearTeamId,
-        });
-      }
-    } catch (err: any) {
-      console.log(chalk.red(`  Could not connect to Linear: ${err.message}`));
-      const retry = await confirm({ message: "Save config anyway?", default: false });
-      if (!retry) return;
-    }
   }
 
   saveConfig({
     aiProvider: aiProvider as "anthropic" | "openai" | "gemini",
     aiApiKey: aiApiKey.trim(),
+    ...(aiModel ? { aiModel } : {}),
     ...(useLinear && linearApiKey ? { linearApiKey: linearApiKey.trim(), linearTeamId } : {}),
   });
 
