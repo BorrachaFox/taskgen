@@ -19,30 +19,30 @@ ${chalk.bold("First time?")}
 `;
 
 async function main() {
-  switch (command) {
-    case "setup":
-      await runSetup();
-      break;
+    switch (command) {
+        case "setup":
+            await runSetup();
+            break;
 
-    case "create-task":
-      await runCreateTask();
-      break;
+        case "create-task":
+            await runCreateTask();
+            break;
 
-    case "help":
-    case "--help":
-    case "-h":
-    case undefined:
-      console.log(HELP);
-      break;
+        case "help":
+        case "--help":
+        case "-h":
+        case undefined:
+            console.log(HELP);
+            break;
 
-    default:
-      console.log(chalk.red(`Unknown command: ${command}`));
-      console.log(HELP);
-      process.exit(1);
-  }
+        default:
+            console.log(chalk.red(`Unknown command: ${command}`));
+            console.log(HELP);
+            process.exit(1);
+    }
 }
 
 main().catch((err) => {
-  console.error(chalk.red("Unexpected error:"), err.message);
-  process.exit(1);
+    console.error(chalk.red("Unexpected error:"), err.message);
+    process.exit(1);
 });

@@ -1,8 +1,8 @@
 export const PRIORITY_MAP: Record<string, number> = {
-  urgent: 1,
-  high: 2,
-  medium: 3,
-  low: 4,
+    urgent: 1,
+    high: 2,
+    medium: 3,
+    low: 4,
 };
 
 export const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash";

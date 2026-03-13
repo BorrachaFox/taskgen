@@ -14,10 +14,19 @@
   },
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "npm run build",
-    "dev": "tsx src/main.ts",
-    "setup": "tsx src/main.ts setup",
-    "create-task": "tsx src/main.ts create-task"
+    "build:min": "npm run build && node scripts/minify.js",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src",
+    "prepublishOnly": "npm run lint && npm run build:min",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@inquirer/prompts": "^7.2.0",
@@ -25,8 +34,18 @@
     "ora": "^8.1.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.4.4",
+    "@commitlint/config-conventional": "^20.4.4",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^22.0.0",
+    "eslint": "^10.0.3",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "husky": "^9.1.7",
+    "prettier": "^3.8.1",
+    "terser": "^5.46.0",
     "tsx": "^4.19.0",
-    "typescript": "^5.5.0"
+    "typescript": "^5.5.0",
+    "typescript-eslint": "^8.57.0"
   }
 }
