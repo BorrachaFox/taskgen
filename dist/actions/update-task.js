@@ -3,12 +3,7 @@ import chalk from "chalk";
 import ora from "ora";
 import { loadConfig } from "../config.js";
 import Linear from "../integrations/linear.js";
-function coloredCircle(hex) {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return chalk.rgb(r, g, b)("●");
-}
+import { genColoredStatusCircle } from "../utils.js";
 export async function runUpdateTask(identifier) {
     const config = loadConfig();
     const client = new Linear(config);
@@ -40,7 +35,7 @@ export async function runUpdateTask(identifier) {
     const stateId = await select({
         message: "New status:",
         choices: states.map((s) => ({
-            name: `${coloredCircle(s.color)} ${s.name}`,
+            name: `${genColoredStatusCircle(s.color)} ${s.name}`,
             value: s.id,
         })),
         default: issue.stateId,
@@ -50,7 +45,7 @@ export async function runUpdateTask(identifier) {
     try {
         await client.updateIssueStatus(issue.id, stateId);
         const newState = states.find((s) => s.id === stateId);
-        updateSpinner.succeed(`${issue.identifier} updated to ${coloredCircle(newState.color)} ${newState.name}`);
+        updateSpinner.succeed(`${issue.identifier} updated to ${genColoredStatusCircle(newState.color)} ${newState.name}`);
     }
     catch (err) {
         updateSpinner.fail(`Update failed: ${err.message}`);
