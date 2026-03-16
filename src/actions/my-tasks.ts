@@ -55,11 +55,14 @@ export async function runGetMyTasks() {
 
     const selectedState = await select({
         message: "Select status:",
-        choices: states.map((s) => ({
-            name: `${genColoredStatusCircle(s.color)} ${s.name}`,
-            value: s.id,
-        })),
-        pageSize: states.length,
+        choices: [
+            { name: "All", value: "__all__" },
+            ...states.map((s) => ({
+                name: `${genColoredStatusCircle(s.color)} ${s.name}`,
+                value: s.id,
+            })),
+        ],
+        pageSize: states.length + 1,
     });
 
     const fetchSpinner = ora("Fetching your tasks...").start();
@@ -68,7 +71,7 @@ export async function runGetMyTasks() {
 
     try {
         issues = await client.getMyIssues({
-            stateIds: selectedState ? [selectedState] : undefined,
+            stateIds: selectedState !== "__all__" ? [selectedState] : undefined,
             teamId,
         });
         fetchSpinner.stop();

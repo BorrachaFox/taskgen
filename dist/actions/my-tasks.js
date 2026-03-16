@@ -47,20 +47,22 @@ export async function runGetMyTasks() {
         statesSpinner.fail(`Could not fetch statuses: ${err.message}`);
         process.exit(1);
     }
-    let selectedState = undefined;
-    selectedState = await select({
+    const selectedState = await select({
         message: "Select status:",
-        choices: states.map((s) => ({
-            name: `${genColoredStatusCircle(s.color)} ${s.name}`,
-            value: s.id,
-        })),
-        pageSize: states.length,
+        choices: [
+            { name: "All", value: "__all__" },
+            ...states.map((s) => ({
+                name: `${genColoredStatusCircle(s.color)} ${s.name}`,
+                value: s.id,
+            })),
+        ],
+        pageSize: states.length + 1,
     });
     const fetchSpinner = ora("Fetching your tasks...").start();
     let issues;
     try {
         issues = await client.getMyIssues({
-            stateIds: selectedState ? [selectedState] : undefined,
+            stateIds: selectedState !== "__all__" ? [selectedState] : undefined,
             teamId,
         });
         fetchSpinner.stop();

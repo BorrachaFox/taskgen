@@ -12,6 +12,7 @@ ${chalk.bold("Usage:")}
   taskgen setup          Configure AI provider and Linear API keys
   taskgen create-task    Generate and create a new task
   taskgen update-task <ID>   Update task status  (ex: taskgen update-task TEST-01)
+  taskgen my-tasks       List your tasks
   taskgen help           Show this help
 
 ${chalk.bold("First time?")}
