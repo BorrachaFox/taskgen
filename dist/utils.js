@@ -19,3 +19,10 @@ export const genColoredStatusCircle = (hex) => {
     const b = parseInt(hex.slice(5, 7), 16);
     return chalk.rgb(r, g, b)("●");
 };
+export const genBranchName = (identifier, title) => {
+    return `${identifier}-${title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, "")
+        .trim()
+        .replace(/\s+/g, "-")}`;
+};

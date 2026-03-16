@@ -21,3 +21,11 @@ export const genColoredStatusCircle = (hex: string): string => {
     const b = parseInt(hex.slice(5, 7), 16);
     return chalk.rgb(r, g, b)("●");
 };
+
+export const genBranchName = (identifier: string, title: string): string => {
+    return `${identifier}-${title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, "")
+        .trim()
+        .replace(/\s+/g, "-")}`;
+};

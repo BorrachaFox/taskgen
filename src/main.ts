@@ -4,6 +4,7 @@ import chalk from "chalk";
 import { runSetup } from "./setup.js";
 import { runCreateTask } from "./actions/create-task.js";
 import { runUpdateTask } from "./actions/update-task.js";
+import { runGetMyTasks } from "./actions/my-tasks.js";
 
 const command = process.argv[2];
 
@@ -14,6 +15,7 @@ ${chalk.bold("Usage:")}
   taskgen setup          Configure AI provider and Linear API keys
   taskgen create-task    Generate and create a new task
   taskgen update-task <ID>   Update task status  (ex: taskgen update-task TEST-01)
+  taskgen my-tasks       List your tasks
   taskgen help           Show this help
 
 ${chalk.bold("First time?")}
@@ -45,6 +47,11 @@ async function main() {
 
             await runUpdateTask(identifier);
             break;
+
+        case "my-tasks": {
+            await runGetMyTasks();
+            break;
+        }
 
         case "help":
         case "--help":

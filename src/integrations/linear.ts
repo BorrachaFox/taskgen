@@ -37,6 +37,15 @@ export interface IssueDetail {
     stateId: string;
 }
 
+export interface LinearIssueListItem {
+    id: string;
+    identifier: string;
+    title: string;
+    stateName: string;
+    teamKey: string;
+    stateId: string;
+}
+
 export default class Linear {
     constructor(private config: Config) {
         if (!config.linearApiKey) {
@@ -172,5 +181,39 @@ export default class Linear {
         }`,
             { issueId, stateId }
         );
+    }
+
+    async getMyIssues(
+        filters: { stateIds?: string[]; teamId?: string } = {}
+    ): Promise<LinearIssueListItem[]> {
+        const data = await this.query(
+            `query($filter: IssueFilter) {
+            viewer {
+                assignedIssues(filter: $filter) {
+                    nodes {
+                        id identifier title
+                        state { id name color }
+                        team { key }
+                    }
+                }
+            }
+        }`,
+            {
+                filter: {
+                    ...(filters.stateIds?.length
+                        ? { state: { id: { in: filters.stateIds } } }
+                        : {}),
+                    ...(filters.teamId ? { team: { id: { eq: filters.teamId } } } : {}),
+                },
+            }
+        );
+
+        return data.viewer.assignedIssues.nodes.map((n: any) => ({
+            id: n.id,
+            identifier: n.identifier,
+            title: n.title,
+            stateId: n.state.id,
+            teamKey: n.team.key,
+        }));
     }
 }

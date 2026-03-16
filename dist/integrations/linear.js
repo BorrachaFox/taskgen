@@ -101,4 +101,31 @@ export default class Linear {
           }
         }`, { issueId, stateId });
     }
+    async getMyIssues(filters = {}) {
+        const data = await this.query(`query($filter: IssueFilter) {
+            viewer {
+                assignedIssues(filter: $filter) {
+                    nodes {
+                        id identifier title
+                        state { id name color }
+                        team { key }
+                    }
+                }
+            }
+        }`, {
+            filter: {
+                ...(filters.stateIds?.length
+                    ? { state: { id: { in: filters.stateIds } } }
+                    : {}),
+                ...(filters.teamId ? { team: { id: { eq: filters.teamId } } } : {}),
+            },
+        });
+        return data.viewer.assignedIssues.nodes.map((n) => ({
+            id: n.id,
+            identifier: n.identifier,
+            title: n.title,
+            stateId: n.state.id,
+            teamKey: n.team.key,
+        }));
+    }
 }

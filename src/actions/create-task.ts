@@ -5,7 +5,7 @@ import ora from "ora";
 import { loadConfig } from "../config.js";
 import { generateTask } from "../ai.js";
 import Linear from "../integrations/linear.js";
-import { genColoredStatusCircle, loadLocalTemplates } from "../utils.js";
+import { genBranchName, genColoredStatusCircle, loadLocalTemplates } from "../utils.js";
 import { PRIORITY_MAP } from "../constants.js";
 
 export async function runCreateTask() {
@@ -230,11 +230,7 @@ export async function runCreateTask() {
                     `Issue created: ${chalk.cyan(issue.identifier)} — ${issue.url}`
                 );
 
-                const branchName = `${issue.identifier}-${task.title
-                    .toLowerCase()
-                    .replace(/[^a-z0-9\s]/g, "")
-                    .trim()
-                    .replace(/\s+/g, "-")}`;
+                const branchName = genBranchName(issue.identifier, task.title);
 
                 console.log(chalk.bold("\n🌿 Branch suggested:"));
                 console.log(chalk.cyan(`  ${branchName}`));
