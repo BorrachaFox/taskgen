@@ -29,6 +29,14 @@ export interface IssueDetail {
     teamId: string;
     stateId: string;
 }
+export interface LinearIssueListItem {
+    id: string;
+    identifier: string;
+    title: string;
+    stateName: string;
+    teamKey: string;
+    stateId: string;
+}
 export default class Linear {
     private config;
     constructor(config: Config);
@@ -45,6 +53,10 @@ export default class Linear {
     getTeamStates(teamId: string): Promise<State[]>;
     getIssueByIdentifier(identifier: string): Promise<IssueDetail>;
     updateIssueStatus(issueId: string, stateId: string): Promise<void>;
+    getMyIssues(filters?: {
+        stateIds?: string[];
+        teamId?: string;
+    }): Promise<LinearIssueListItem[]>;
 }
 export {};
 //# sourceMappingURL=linear.d.ts.map

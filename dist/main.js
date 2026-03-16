@@ -3,6 +3,7 @@ import chalk from "chalk";
 import { runSetup } from "./setup.js";
 import { runCreateTask } from "./actions/create-task.js";
 import { runUpdateTask } from "./actions/update-task.js";
+import { runGetMyTasks } from "./actions/my-tasks.js";
 const command = process.argv[2];
 const HELP = `
 ${chalk.bold.cyan("taskgen")} — AI-powered task creator
@@ -32,6 +33,10 @@ async function main() {
             }
             await runUpdateTask(identifier);
             break;
+        case "my-tasks": {
+            await runGetMyTasks();
+            break;
+        }
         case "help":
         case "--help":
         case "-h":
