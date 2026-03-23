@@ -23,10 +23,10 @@ async function main() {
         case "setup":
             await runSetup();
             break;
-        case "create-task":
+        case "new":
             await runCreateTask();
             break;
-        case "update-task":
+        case "update":
             const identifier = process.argv[3];
             if (!identifier) {
                 console.log(chalk.red("Usage: taskgen update-task <IDENTIFIER>  (ex: taskgen update-task TEST-01)"));
@@ -34,7 +34,7 @@ async function main() {
             }
             await runUpdateTask(identifier);
             break;
-        case "my-tasks": {
+        case "list": {
             await runGetMyTasks();
             break;
         }

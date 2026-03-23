@@ -48,7 +48,7 @@ async function main() {
             await runUpdateTask(identifier);
             break;
 
-        case "liste": {
+        case "list": {
             await runGetMyTasks();
             break;
         }
