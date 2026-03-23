@@ -28,12 +28,12 @@ async function main() {
             await runSetup();
             break;
 
-        case "create-task":
+        case "new":
             await runCreateTask();
             break;
 
         /* eslint-disable no-case-declarations */
-        case "update-task":
+        case "update":
             const identifier = process.argv[3];
 
             if (!identifier) {
@@ -48,7 +48,7 @@ async function main() {
             await runUpdateTask(identifier);
             break;
 
-        case "my-tasks": {
+        case "list": {
             await runGetMyTasks();
             break;
         }
